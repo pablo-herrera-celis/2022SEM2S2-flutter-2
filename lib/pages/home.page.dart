@@ -12,9 +12,9 @@ class HomePage extends StatefulWidget {
 
 
 class _HomePageState extends State<HomePage> {
-    double peso = 0.0;
-    int edad = 0;
-    double slider = 0;
+    double peso = 50.0;
+    int edad = 10;
+    double estatura = 50.0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,7 +39,7 @@ class _HomePageState extends State<HomePage> {
                       // ignore: prefer_const_literals_to_create_immutables
                       children: [
                         Icon(Icons.man,size: 100,),
-                        Text("Hombre")
+                        Text("Hombre",style: TextStyle(fontWeight: FontWeight.bold),)
                       ],
                     ),
                     decoration: BoxDecoration(
@@ -57,7 +57,7 @@ class _HomePageState extends State<HomePage> {
                       // ignore: prefer_const_literals_to_create_immutables
                       children: [
                         Icon(Icons.woman,size:100),
-                        Text("Mujer")
+                        Text("Mujer",style: TextStyle(fontWeight: FontWeight.bold))
                       ],
                     ),
                     decoration: BoxDecoration(
@@ -79,20 +79,24 @@ class _HomePageState extends State<HomePage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text("Estatura"),
+                    Text("Estatura",style: TextStyle(fontSize: 30,fontWeight: FontWeight.bold,)),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text("${slider.toInt()}"),
-                        Text("cm"),
+                        Text("${estatura.toInt()}",style: TextStyle(fontSize: 30),),
+                        Text("cm",style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold,),),
+                        
                       ],
                     ),
                     Slider(
-                      value: slider,
-                      max: 300,
+                      value: estatura,
+                      activeColor: Colors.white,
+                      thumbColor: Color.fromARGB(255, 240, 46, 98),
+                      min: 50,
+                      max: 250,
                      onChanged: (double value){
                       setState(() {
-                        slider=value;
+                        estatura=value;
                       });
                      }
                      ),
@@ -131,12 +135,20 @@ class _HomePageState extends State<HomePage> {
                           children: [
                             IconButton(iconSize: 50,onPressed: (){
                               setState(() {
-                                peso -= 1;
+                                if(peso == 50){
+                                  print("No puede ser menor a 50");
+                                }else{
+                                  peso -= 1;
+                                }
                               });
                             }, icon: Icon(Icons.remove_circle)),
                             IconButton(iconSize: 50,onPressed: (){
                               setState(() {
-                                peso += 1;
+                                if(peso == 500){
+                                  print("No puede ser mayor a 500");
+                                }else{
+                                  peso += 1;
+                                }
                               });
                             }, icon: Icon(Icons.add_circle)),
                           ],
@@ -167,8 +179,24 @@ class _HomePageState extends State<HomePage> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            IconButton(iconSize: 50,onPressed: (){}, icon: Icon(Icons.remove_circle)),
-                            IconButton(iconSize: 50,onPressed: (){}, icon: Icon(Icons.add_circle)),
+                            IconButton(iconSize: 50,onPressed: (){
+                              setState(() {
+                                if(edad == 10){
+                                  print("No puede ser menor a 10");
+                                }else{
+                                  edad -= 1;
+                                }
+                              });
+                            }, icon: Icon(Icons.remove_circle)),
+                            IconButton(iconSize: 50,onPressed: (){
+                              setState(() {
+                                if(edad == 120){
+                                  print("No puede ser mayor a 120");
+                                }else{
+                                  edad += 1;
+                                }
+                              });
+                            }, icon: Icon(Icons.add_circle)),
                           ],
                         )
                       ],
@@ -186,7 +214,46 @@ class _HomePageState extends State<HomePage> {
           //Cuarto contenedor
           GestureDetector(
             onTap: (){
-              Navigator.push(context, MaterialPageRoute(builder: (context) => DetallePage(),));
+              double valorIMC = peso / (estatura * estatura);
+              String estado = "Peso", mensaje = "Tu puedes";
+              Color colorEstado= Colors.black;
+              if(valorIMC <18.5){
+                estado = "Bajo Peso";
+                colorEstado = Colors.orangeAccent;
+                mensaje="Tienes bajo peso. \nVe a comer hamburguesa en Red Pepper";
+              }
+              if(valorIMC > 18.5 && valorIMC <24.9){
+                estado = "Normal";
+                colorEstado = Colors.greenAccent;
+                mensaje = "Tu peso es normal. \nBuen trabajo!";
+              }
+              if(valorIMC > 25 && valorIMC <29.9){
+                estado = "Sobre Peso";
+                colorEstado = Colors.orange;
+                mensaje = "Uy tienes sobre peso. \nMenos comida en la noche";
+              }
+              if(valorIMC > 30 && valorIMC <34.9){
+                estado = "Obesidad I";
+                colorEstado = Colors.redAccent;
+                mensaje = "Cuidado ya tienes obesidad I";
+              }
+              if(valorIMC > 35 && valorIMC <39.9){
+                estado = "Obesidad II";
+                colorEstado = Colors.red;
+                mensaje = "Tienes obesidad II. \nToca que vaya al gym";
+              }
+              if(valorIMC > 40 && valorIMC <44.9){
+                estado = "Obesidad III";
+                colorEstado = Color.fromARGB(71, 133, 43, 43);
+                mensaje = "Tienes obesidad III. \nNecesitas cuidar mas de tu salud";
+              }
+              if( valorIMC > 50 ){
+                estado = "Obesidad IV";
+                colorEstado = Color.fromARGB(40, 43, 1, 1);
+                mensaje = "Ya le toca operarse esta muy gordo";
+              }
+
+              Navigator.push(context, MaterialPageRoute(builder: (context) => DetallePage(IMC:valorIMC,estado: estado,color: colorEstado,motivacionMensaje: mensaje),));
             },
             child: Container(
               height: 100,
